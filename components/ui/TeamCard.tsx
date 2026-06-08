@@ -32,6 +32,10 @@ export function TeamCard({
   size = "md",
   className,
   accentColor,
+  highlight,
+  highlightColor,
+  onHoverStart,
+  onHoverEnd,
 }: {
   team?: Team | null;
   status?: TeamCardStatus;
@@ -42,9 +46,19 @@ export function TeamCard({
   size?: "sm" | "md" | "lg";
   className?: string;
   accentColor?: string;
+  highlight?: boolean;
+  highlightColor?: string;
+  onHoverStart?: () => void;
+  onHoverEnd?: () => void;
 }) {
   const interactive = Boolean(onClick) && !disabled;
   const eliminated = status === "eliminated";
+  const glowColor = highlightColor ?? "var(--accent-gold)";
+  const boxShadow = highlight
+    ? `0 0 0 2px ${glowColor}, 0 0 16px ${glowColor}66`
+    : status === "winner"
+      ? "inset 4px 0 0 0 var(--accent-green)"
+      : "inset 0 0 0 0 transparent";
 
   // Empty / unresolved slot.
   if (!team) {
@@ -78,11 +92,11 @@ export function TeamCard({
       }
       whileHover={interactive ? { scale: 1.015 } : undefined}
       whileTap={interactive ? { scale: 0.985 } : undefined}
-      animate={
-        status === "winner"
-          ? { boxShadow: "inset 4px 0 0 0 var(--accent-green)" }
-          : { boxShadow: "inset 0 0 0 0 transparent" }
-      }
+      onMouseEnter={onHoverStart}
+      onMouseLeave={onHoverEnd}
+      onFocus={onHoverStart}
+      onBlur={onHoverEnd}
+      animate={{ boxShadow }}
       transition={{ duration: 0.3 }}
       className={cn(
         "group relative flex w-full items-center gap-3 overflow-hidden rounded-lg border bg-surface px-3 text-left transition-colors",

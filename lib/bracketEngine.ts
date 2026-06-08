@@ -3,6 +3,7 @@ import { GROUPS_BY_ID } from "@/data/groups";
 import type {
   BracketMatch,
   GroupId,
+  KnockoutRound,
   SlotRef,
   TournamentState,
 } from "@/types/tournament";
@@ -171,3 +172,33 @@ export function allGroupsComplete(state: TournamentState): boolean {
 }
 
 export const THIRD_PLACE_SLOTS = 8;
+
+/** Distinct teams currently appearing in a given knockout round's matches. */
+export function teamsInRound(
+  state: TournamentState,
+  round: KnockoutRound,
+): string[] {
+  const { resolveMatch } = buildResolver(state);
+  const ids = new Set<string>();
+  for (const m of BRACKET) {
+    if (m.round !== round) continue;
+    const r = resolveMatch(m.id);
+    if (r.homeTeamId) ids.add(r.homeTeamId);
+    if (r.awayTeamId) ids.add(r.awayTeamId);
+  }
+  return [...ids];
+}
+
+/** Match ids a team currently appears in — their live route through the bracket. */
+export function teamPathMatchIds(
+  state: TournamentState,
+  teamId: string,
+): Set<string> {
+  const { resolveMatch } = buildResolver(state);
+  const out = new Set<string>();
+  for (const m of BRACKET) {
+    const r = resolveMatch(m.id);
+    if (r.homeTeamId === teamId || r.awayTeamId === teamId) out.add(m.id);
+  }
+  return out;
+}

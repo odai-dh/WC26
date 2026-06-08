@@ -3,14 +3,22 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowRight, ChevronLeft, ChevronRight, Crown } from "lucide-react";
+import {
+  ArrowRight,
+  ChevronLeft,
+  ChevronRight,
+  Crown,
+  RotateCcw,
+} from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { StageHeader } from "@/components/layout/StageHeader";
 import { MatchCard } from "@/components/ui/MatchCard";
 import { BracketLine, type Connector } from "@/components/ui/BracketLine";
+import { ConfederationBreakdown } from "@/components/ui/ConfederationBreakdown";
 import { matchesForRound, ROUNDS } from "@/data/bracket";
-import { getTeam } from "@/data/teams";
+import { CONFEDERATION_COLORS, getTeam } from "@/data/teams";
 import type { KnockoutRound } from "@/types/tournament";
+import { teamPathMatchIds } from "@/lib/bracketEngine";
 import { useTournament } from "@/lib/useTournament";
 
 // ---- desktop canvas geometry ----
@@ -66,6 +74,32 @@ export default function BracketPage() {
         </AnimatePresence>
       </div>
 
+      {Object.keys(t.state.knockoutPicks).length > 0 && (
+        <div className="mb-5 flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => {
+              if (
+                window.confirm(
+                  "Clear all knockout picks? Your group-stage standings are kept.",
+                )
+              ) {
+                t.resetKnockouts();
+              }
+            }}
+            className="inline-flex items-center gap-2 rounded-lg border border-border bg-surface px-3.5 py-2 font-display text-sm font-bold uppercase tracking-wide text-text-secondary transition hover:border-accent-red/60 hover:text-text-primary"
+          >
+            <RotateCcw className="h-4 w-4" />
+            Reset knockouts
+          </button>
+          <span className="hidden font-mono text-[10px] uppercase tracking-widest text-text-muted sm:inline">
+            Group picks stay intact
+          </span>
+        </div>
+      )}
+
+      <ConfederationBreakdown state={t.state} />
+
       {/* Desktop / tablet full bracket */}
       <div className="hidden overflow-x-auto pb-6 lg:block">
         <DesktopBracket t={t} />
@@ -84,8 +118,19 @@ export default function BracketPage() {
 }
 
 function DesktopBracket({ t }: { t: ReturnType<typeof useTournament> }) {
+  const [pathTeam, setPathTeam] = useState<string | null>(null);
+
   const decided = (matchId: string) =>
     Boolean(t.state.knockoutPicks[matchId]);
+
+  const pathSet = useMemo(
+    () =>
+      pathTeam ? teamPathMatchIds(t.state, pathTeam) : new Set<string>(),
+    [pathTeam, t.state],
+  );
+  const pathColor = pathTeam
+    ? CONFEDERATION_COLORS[getTeam(pathTeam)?.confederation ?? "UEFA"]
+    : undefined;
 
   const connectors = useMemo<Connector[]>(() => {
     const out: Connector[] = [];
@@ -102,14 +147,25 @@ function DesktopBracket({ t }: { t: ReturnType<typeof useTournament> }) {
         const cy1 = centerY(nChild, 2 * j + 1);
         const pCY = centerY(nParent, j);
         const d = `M ${cRight} ${cy0} H ${midX} M ${cRight} ${cy1} H ${midX} M ${midX} ${cy0} V ${cy1} M ${midX} ${pCY} H ${pLeft}`;
-        const active =
-          decided(childMatches[2 * j].id) && decided(childMatches[2 * j + 1].id);
-        out.push({ id: `${ROUND_KEYS[r]}-${j}`, d, active });
+        const child0 = childMatches[2 * j].id;
+        const child1 = childMatches[2 * j + 1].id;
+        const parentId = parentMatches[j].id;
+        const active = decided(child0) && decided(child1);
+        const onPath =
+          pathColor &&
+          pathSet.has(parentId) &&
+          (pathSet.has(child0) || pathSet.has(child1));
+        out.push({
+          id: `${ROUND_KEYS[r]}-${j}`,
+          d,
+          active,
+          highlightColor: onPath ? pathColor : undefined,
+        });
       }
     }
     return out;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [t.state.knockoutPicks]);
+  }, [t.state.knockoutPicks, pathSet, pathColor]);
 
   return (
     <div
@@ -156,6 +212,9 @@ function DesktopBracket({ t }: { t: ReturnType<typeof useTournament> }) {
                 away={getTeam(resolved.awayTeamId)}
                 winnerId={resolved.winnerId}
                 onPick={(teamId) => t.advanceTeam(m.id, teamId)}
+                highlightTeamId={pathTeam}
+                highlightColor={pathColor}
+                onHoverTeam={setPathTeam}
                 compact
               />
             </div>

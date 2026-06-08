@@ -153,6 +153,11 @@ export function useTournament() {
     setState(EMPTY_STATE);
   }, []);
 
+  /** Clear only the knockout picks, keeping the group stage intact. */
+  const resetKnockouts = useCallback(() => {
+    update((prev) => ({ ...prev, knockoutPicks: {}, champion: null }));
+  }, [update]);
+
   /** Pre-fill the whole bracket so the pot favourites advance. */
   const autoFillSeeded = useCallback(() => {
     update(() => buildSeededState());
@@ -186,6 +191,7 @@ export function useTournament() {
     advanceTeam,
     setStage,
     resetTournament,
+    resetKnockouts,
     autoFillSeeded,
     randomize,
   };

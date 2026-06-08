@@ -13,6 +13,9 @@ export function MatchCard({
   onPick,
   className,
   compact,
+  highlightTeamId,
+  highlightColor,
+  onHoverTeam,
 }: {
   matchLabel?: string;
   home: Team | null | undefined;
@@ -21,8 +24,15 @@ export function MatchCard({
   onPick: (teamId: string) => void;
   className?: string;
   compact?: boolean;
+  highlightTeamId?: string | null;
+  highlightColor?: string;
+  onHoverTeam?: (teamId: string | null) => void;
 }) {
   const decided = Boolean(winnerId);
+  const onPath = Boolean(
+    highlightTeamId &&
+      (home?.id === highlightTeamId || away?.id === highlightTeamId),
+  );
 
   const statusFor = (team: Team | null | undefined) => {
     if (!team) return "default" as const;
@@ -33,8 +43,9 @@ export function MatchCard({
   return (
     <div
       className={cn(
-        "relative rounded-xl border border-border bg-surface/60 p-1.5",
+        "relative rounded-xl border border-border bg-surface/60 p-1.5 transition-colors",
         decided && "border-accent-green/30",
+        onPath && "border-accent-gold/50 bg-accent-gold/[0.04]",
         className,
       )}
     >
@@ -50,6 +61,10 @@ export function MatchCard({
           size={compact ? "sm" : "md"}
           onClick={home ? () => onPick(home.id) : undefined}
           disabled={!home || !away}
+          highlight={Boolean(home && home.id === highlightTeamId)}
+          highlightColor={highlightColor}
+          onHoverStart={home ? () => onHoverTeam?.(home.id) : undefined}
+          onHoverEnd={onHoverTeam ? () => onHoverTeam(null) : undefined}
         />
         <div className="flex items-center gap-2 px-2 py-0.5" aria-hidden>
           <span className="h-px flex-1 bg-border" />
@@ -64,6 +79,10 @@ export function MatchCard({
           size={compact ? "sm" : "md"}
           onClick={away ? () => onPick(away.id) : undefined}
           disabled={!home || !away}
+          highlight={Boolean(away && away.id === highlightTeamId)}
+          highlightColor={highlightColor}
+          onHoverStart={away ? () => onHoverTeam?.(away.id) : undefined}
+          onHoverEnd={onHoverTeam ? () => onHoverTeam(null) : undefined}
         />
       </div>
       {decided && (

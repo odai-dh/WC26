@@ -34,7 +34,9 @@ npm run build    # production build
 2. **/bracket** — The official FIFA 2026 knockout bracket (matches 73–104).
    Click a team to advance them; the loser is greyed out everywhere instantly.
    SVG connectors draw and turn green as each match resolves. Desktop shows the
-   full tree; mobile is a round-by-round stepper.
+   full tree; mobile is a round-by-round stepper. Hover any team to glow their
+   live route to the final, watch the **confederation breakdown** of your last 8
+   and last 4 update, and **reset just the knockouts** without losing your groups.
 3. **/champion** — When the final is picked: confetti, a glowing champion card,
    and the full "path to glory" (every team beaten). Export your prediction as a
    **shareable link** (`?p=` — opening it loads the whole bracket), a **social

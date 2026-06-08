@@ -8,6 +8,8 @@ export type Connector = {
   d: string;
   /** Drawn fully + green when the feeding match is decided. */
   active: boolean;
+  /** When set, the connector glows in this colour (a highlighted team's route). */
+  highlightColor?: string;
 };
 
 /**
@@ -37,13 +39,24 @@ export function BracketLine({
         <motion.path
           key={c.id}
           d={c.d}
-          stroke={c.active ? "var(--accent-green)" : "var(--border)"}
-          strokeWidth={2}
+          stroke={
+            c.highlightColor
+              ? c.highlightColor
+              : c.active
+                ? "var(--accent-green)"
+                : "var(--border)"
+          }
+          strokeWidth={c.highlightColor ? 3 : 2}
           strokeLinecap="round"
           strokeLinejoin="round"
           initial={false}
-          animate={{ pathLength: c.active ? 1 : 1, opacity: c.active ? 1 : 0.6 }}
-          transition={{ duration: 0.6, ease: "easeInOut" }}
+          animate={{ opacity: c.highlightColor ? 1 : c.active ? 1 : 0.6 }}
+          transition={{ duration: 0.3, ease: "easeInOut" }}
+          style={
+            c.highlightColor
+              ? { filter: `drop-shadow(0 0 5px ${c.highlightColor})` }
+              : undefined
+          }
         />
       ))}
     </svg>
