@@ -33,7 +33,9 @@ npm run build    # production build
    SVG connectors draw and turn green as each match resolves. Desktop shows the
    full tree; mobile is a round-by-round stepper.
 3. **/champion** — When the final is picked: confetti, a glowing champion card,
-   the full "path to glory" (every team beaten), and a shareable summary.
+   and the full "path to glory" (every team beaten). Export your prediction as a
+   **shareable link** (`?p=` — opening it loads the whole bracket), a **social
+   PNG card**, or a timestamped **PDF**.
 
 ## Structure
 

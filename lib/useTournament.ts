@@ -12,6 +12,7 @@ import {
   THIRD_PLACE_SLOTS,
 } from "./bracketEngine";
 import { clearState, EMPTY_STATE, loadState, saveState } from "./storage";
+import { clearShareParam, readSharedStateFromUrl } from "./share";
 
 const ROUND_ORDER = ["R32", "R16", "QF", "SF", "FINAL"] as const;
 
@@ -46,10 +47,17 @@ export function useTournament() {
   const [state, setState] = useState<TournamentState>(EMPTY_STATE);
   const [hydrated, setHydrated] = useState(false);
 
-  // Load once on mount.
+  // Load once on mount. A shared prediction in the URL (?p=...) wins over
+  // any locally-saved bracket, then the param is stripped from the address bar.
   useEffect(() => {
-    const loaded = loadState();
-    if (loaded) setState(normalize(loaded));
+    const shared = readSharedStateFromUrl();
+    if (shared) {
+      setState(normalize(shared));
+      clearShareParam();
+    } else {
+      const loaded = loadState();
+      if (loaded) setState(normalize(loaded));
+    }
     setHydrated(true);
   }, []);
 
@@ -149,8 +157,9 @@ export function useTournament() {
   const groupsDone = useMemo(() => allGroupsComplete(state), [state]);
   const thirdsDone = state.thirdPlacePicks.length === THIRD_PLACE_SLOTS;
   const completedGroups = useMemo(
-    () =>
-      GROUP_IDS.filter((g) => isGroupComplete(g, state)).length,
+    () => GROUP_IDS.filter((g) => isGroupComplete(g, state)).length,
+    // isGroupComplete only reads groupPicks, so that's the real dependency.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [state.groupPicks],
   );
 

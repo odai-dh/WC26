@@ -3,12 +3,14 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Check, Download, Share2, Sparkles, Trophy } from "lucide-react";
+import { Check, Download, ImageIcon, Share2, Sparkles, Trophy } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { BRACKET, ROUNDS } from "@/data/bracket";
 import { getTeam } from "@/data/teams";
 import { buildResolver } from "@/lib/bracketEngine";
+import { downloadPredictionImage } from "@/lib/exportImage";
 import { downloadPredictionPdf } from "@/lib/exportPrediction";
+import { buildShareUrl } from "@/lib/share";
 import { useTournament } from "@/lib/useTournament";
 
 const CONFETTI_COLORS = [
@@ -58,12 +60,13 @@ export default function ChampionPage() {
 
   const handleShare = async () => {
     if (!champion) return;
+    const url = buildShareUrl(t.state);
     const text = `I predict ${champion.flag} ${champion.name} will win WC26 Final Call! 🏆 #WorldCup2026`;
     try {
       if (navigator.share) {
-        await navigator.share({ title: "WC26 Final Call", text });
+        await navigator.share({ title: "WC26 Final Call", text, url });
       } else {
-        await navigator.clipboard.writeText(text);
+        await navigator.clipboard.writeText(`${text}\n${url}`);
         setCopied(true);
         setTimeout(() => setCopied(false), 2200);
       }
@@ -200,19 +203,27 @@ export default function ChampionPage() {
         </div>
 
         {/* Actions */}
-        <div className="mt-10 flex w-full max-w-2xl flex-col gap-3 sm:flex-row">
+        <div className="mt-10 grid w-full max-w-2xl grid-cols-1 gap-3 sm:grid-cols-2">
           <button
             type="button"
             onClick={handleShare}
-            className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-accent-gold px-5 py-3 font-display text-lg font-bold uppercase tracking-wide text-base transition hover:brightness-110"
+            className="inline-flex items-center justify-center gap-2 rounded-lg bg-accent-gold px-5 py-3 font-display text-lg font-bold uppercase tracking-wide text-base transition hover:brightness-110"
           >
             {copied ? <Check className="h-5 w-5" /> : <Share2 className="h-5 w-5" />}
-            {copied ? "Copied!" : "Share my call"}
+            {copied ? "Link copied!" : "Share my call"}
+          </button>
+          <button
+            type="button"
+            onClick={() => downloadPredictionImage(t.state)}
+            className="inline-flex items-center justify-center gap-2 rounded-lg border border-border bg-surface px-5 py-3 font-display text-lg font-bold uppercase tracking-wide text-text-primary transition hover:border-accent-gold/60 hover:text-accent-gold"
+          >
+            <ImageIcon className="h-5 w-5" />
+            Save image
           </button>
           <button
             type="button"
             onClick={() => downloadPredictionPdf(t.state)}
-            className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg border border-border bg-surface px-5 py-3 font-display text-lg font-bold uppercase tracking-wide text-text-primary transition hover:border-accent-gold/60 hover:text-accent-gold"
+            className="inline-flex items-center justify-center gap-2 rounded-lg border border-border bg-surface px-5 py-3 font-display text-lg font-bold uppercase tracking-wide text-text-primary transition hover:border-accent-gold/60 hover:text-accent-gold"
           >
             <Download className="h-5 w-5" />
             Download PDF
@@ -229,7 +240,7 @@ export default function ChampionPage() {
                 window.location.href = "/";
               }
             }}
-            className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg border border-border bg-surface px-5 py-3 font-display text-lg font-bold uppercase tracking-wide text-text-secondary transition hover:border-accent-red/60 hover:text-text-primary"
+            className="inline-flex items-center justify-center gap-2 rounded-lg border border-border bg-surface px-5 py-3 font-display text-lg font-bold uppercase tracking-wide text-text-secondary transition hover:border-accent-red/60 hover:text-text-primary"
           >
             Reset Prediction
           </button>
