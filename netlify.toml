@@ -1,0 +1,19 @@
+# Netlify deploy config for WC26 Final Call (Next.js 14 App Router).
+# The official Next.js runtime handles the App Router build, static pages,
+# the /manifest.webmanifest metadata route, and public/ assets (sw.js, icon).
+
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# Service worker must always be revalidated so app updates ship promptly.
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"

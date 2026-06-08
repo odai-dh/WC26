@@ -27,6 +27,21 @@ npm run dev      # http://localhost:3000
 npm run build    # production build
 ```
 
+## Deploy (Netlify)
+
+Connect the repo to Netlify and it builds from `netlify.toml` using the official
+Next.js runtime — no extra setup. Build command `npm run build`, publish `.next`,
+Node 20. Or from the CLI:
+
+```bash
+npm i -g netlify-cli
+netlify deploy --build          # preview
+netlify deploy --build --prod   # production
+```
+
+The service worker only registers in production builds, so offline/install
+behaviour is testable on the deployed site (or a local `npm run build && npm start`).
+
 ## How it works
 
 1. **/groups** — Tap to rank a winner (gold), runner-up (silver), and 3rd place
