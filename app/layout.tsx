@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Barlow_Condensed, DM_Sans, JetBrains_Mono } from "next/font/google";
 import { PWARegister } from "@/components/PWARegister";
+import { DialogProvider } from "@/components/ui/Dialog";
 import "./globals.css";
 
 const display = Barlow_Condensed({
@@ -53,7 +54,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${display.variable} ${body.variable} ${mono.variable}`}>
       <body className="scanlines min-h-screen bg-base text-text-primary antialiased">
-        {children}
+        <DialogProvider>{children}</DialogProvider>
         <PWARegister />
       </body>
     </html>

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, Shuffle, Trophy, Wand2 } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
+import { useDialog } from "@/components/ui/Dialog";
 import { StageHeader } from "@/components/layout/StageHeader";
 import { GroupTable } from "@/components/ui/GroupTable";
 import { TeamCard } from "@/components/ui/TeamCard";
@@ -15,6 +16,7 @@ import { useTournament } from "@/lib/useTournament";
 
 export default function GroupsPage() {
   const t = useTournament();
+  const { confirm } = useDialog();
   const { state } = t;
 
   if (!t.hydrated) {
@@ -33,10 +35,15 @@ export default function GroupsPage() {
     state.thirdPlacePicks.length > 0 ||
     Object.keys(state.knockoutPicks).length > 0;
 
-  const guarded = (fill: () => void) => () => {
+  const guarded = (fill: () => void) => async () => {
     if (
       !hasProgress ||
-      window.confirm("Replace your current picks? This overwrites the whole bracket.")
+      (await confirm({
+        title: "Replace your picks?",
+        message: "This overwrites the whole bracket.",
+        confirmLabel: "Replace",
+        tone: "danger",
+      }))
     ) {
       fill();
     }

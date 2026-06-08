@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Check, Download, ImageIcon, Share2, Sparkles, Trophy } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
+import { useDialog } from "@/components/ui/Dialog";
 import { BRACKET, ROUNDS } from "@/data/bracket";
 import { getTeam } from "@/data/teams";
 import { buildResolver } from "@/lib/bracketEngine";
@@ -22,6 +23,7 @@ const CONFETTI_COLORS = [
 
 export default function ChampionPage() {
   const t = useTournament();
+  const { confirm } = useDialog();
   const [confetti, setConfetti] = useState<
     { id: number; left: number; delay: number; dur: number; color: string; size: number }[]
   >([]);
@@ -230,12 +232,14 @@ export default function ChampionPage() {
           </button>
           <button
             type="button"
-            onClick={() => {
-              if (
-                window.confirm(
-                  "Reset your entire prediction? This clears every pick.",
-                )
-              ) {
+            onClick={async () => {
+              const ok = await confirm({
+                title: "Reset prediction?",
+                message: "This clears every pick in this bracket.",
+                confirmLabel: "Reset",
+                tone: "danger",
+              });
+              if (ok) {
                 t.resetTournament();
                 window.location.href = "/";
               }

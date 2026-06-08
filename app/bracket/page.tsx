@@ -15,6 +15,7 @@ import { StageHeader } from "@/components/layout/StageHeader";
 import { MatchCard } from "@/components/ui/MatchCard";
 import { BracketLine, type Connector } from "@/components/ui/BracketLine";
 import { ConfederationBreakdown } from "@/components/ui/ConfederationBreakdown";
+import { useDialog } from "@/components/ui/Dialog";
 import { matchesForRound, ROUNDS } from "@/data/bracket";
 import { CONFEDERATION_COLORS, getTeam } from "@/data/teams";
 import type { KnockoutRound } from "@/types/tournament";
@@ -34,6 +35,7 @@ const CANVAS_W = colX(ROUND_KEYS.length - 1) + COL_W;
 
 export default function BracketPage() {
   const t = useTournament();
+  const { confirm } = useDialog();
   const [stepRound, setStepRound] = useState(0);
 
   if (!t.hydrated) {
@@ -78,14 +80,14 @@ export default function BracketPage() {
         <div className="mb-5 flex items-center gap-3">
           <button
             type="button"
-            onClick={() => {
-              if (
-                window.confirm(
-                  "Clear all knockout picks? Your group-stage standings are kept.",
-                )
-              ) {
-                t.resetKnockouts();
-              }
+            onClick={async () => {
+              const ok = await confirm({
+                title: "Reset knockouts?",
+                message: "Your group-stage standings are kept.",
+                confirmLabel: "Reset",
+                tone: "danger",
+              });
+              if (ok) t.resetKnockouts();
             }}
             className="inline-flex items-center gap-2 rounded-lg border border-border bg-surface px-3.5 py-2 font-display text-sm font-bold uppercase tracking-wide text-text-secondary transition hover:border-accent-red/60 hover:text-text-primary"
           >

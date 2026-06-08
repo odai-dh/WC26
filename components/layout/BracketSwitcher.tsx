@@ -13,8 +13,10 @@ import {
   setActiveSlot,
 } from "@/lib/storage";
 import { cn } from "@/lib/cn";
+import { useDialog } from "@/components/ui/Dialog";
 
 export function BracketSwitcher() {
+  const { confirm, prompt } = useDialog();
   const [open, setOpen] = useState(false);
   const [slots, setSlots] = useState<BracketSlot[]>([]);
   const [activeId, setActiveId] = useState("");
@@ -48,33 +50,53 @@ export function BracketSwitcher() {
     window.location.reload();
   };
 
-  const onNew = () => {
-    const name = window.prompt("Name your new bracket", `Bracket ${slots.length + 1}`);
+  const onNew = async () => {
+    const name = await prompt({
+      title: "New bracket",
+      defaultValue: `Bracket ${slots.length + 1}`,
+      placeholder: "Bracket name",
+      confirmLabel: "Create",
+    });
     if (name === null) return;
     setActiveSlot(createBracket(name || undefined));
     window.location.reload();
   };
 
-  const onDuplicate = (id: string) => {
+  const onDuplicate = async (id: string) => {
     const src = slots.find((s) => s.id === id);
-    const name = window.prompt("Name the copy", `${src?.name ?? "Bracket"} copy`);
+    const name = await prompt({
+      title: "Duplicate bracket",
+      defaultValue: `${src?.name ?? "Bracket"} copy`,
+      placeholder: "Copy name",
+      confirmLabel: "Duplicate",
+    });
     if (name === null) return;
     setActiveSlot(duplicateBracket(id, name || undefined));
     window.location.reload();
   };
 
-  const onRename = (id: string) => {
+  const onRename = async (id: string) => {
     const src = slots.find((s) => s.id === id);
-    const name = window.prompt("Rename bracket", src?.name ?? "");
+    const name = await prompt({
+      title: "Rename bracket",
+      defaultValue: src?.name ?? "",
+      placeholder: "Bracket name",
+      confirmLabel: "Rename",
+    });
     if (name === null || !name.trim()) return;
     renameBracket(id, name);
     refresh();
   };
 
-  const onDelete = (id: string) => {
+  const onDelete = async (id: string) => {
     const src = slots.find((s) => s.id === id);
-    if (!window.confirm(`Delete "${src?.name}"? This removes all of its picks.`))
-      return;
+    const ok = await confirm({
+      title: "Delete bracket?",
+      message: `"${src?.name}" and all of its picks will be removed.`,
+      confirmLabel: "Delete",
+      tone: "danger",
+    });
+    if (!ok) return;
     const next = deleteBracket(id);
     if (id === activeId) {
       setActiveSlot(next);
