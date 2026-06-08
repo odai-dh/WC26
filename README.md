@@ -6,6 +6,10 @@ Dark, bold, high-contrast, and fully client-side (state lives in `localStorage`)
 
 **48 Teams. One Champion. Your Call.**
 
+Keep **multiple saved brackets** (switch, rename, duplicate, delete from the
+header) and install it as an **offline-capable PWA** — manifest + a network-first
+service worker mean the app shell works with no connection after the first load.
+
 ## Stack
 
 - **Next.js 14** (App Router) + **TypeScript** (strict, no `any`)

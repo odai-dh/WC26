@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ProgressBar, type StageKey } from "@/components/ui/ProgressBar";
+import { BracketSwitcher } from "@/components/layout/BracketSwitcher";
 import { cn } from "@/lib/cn";
 
 const NAV = [
@@ -34,25 +35,28 @@ export function AppShell({
                 Final Call
               </span>
             </Link>
-            <nav className="flex items-center gap-1">
-              {NAV.map((item) => {
-                const active = pathname?.startsWith(item.href);
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={cn(
-                      "rounded-md px-3 py-1.5 font-mono text-xs uppercase tracking-widest transition-colors",
-                      active
-                        ? "bg-elevated text-text-primary"
-                        : "text-text-secondary hover:text-text-primary",
-                    )}
-                  >
-                    {item.label}
-                  </Link>
-                );
-              })}
-            </nav>
+            <div className="flex items-center gap-2">
+              <BracketSwitcher />
+              <nav className="flex items-center gap-1">
+                {NAV.map((item) => {
+                  const active = pathname?.startsWith(item.href);
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className={cn(
+                        "rounded-md px-2.5 py-1.5 font-mono text-xs uppercase tracking-widest transition-colors sm:px-3",
+                        active
+                          ? "bg-elevated text-text-primary"
+                          : "text-text-secondary hover:text-text-primary",
+                      )}
+                    >
+                      {item.label}
+                    </Link>
+                  );
+                })}
+              </nav>
+            </div>
           </div>
           {activeStage && (
             <div className="border-t border-border/60 pt-1.5">

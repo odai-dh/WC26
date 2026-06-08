@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Barlow_Condensed, DM_Sans, JetBrains_Mono } from "next/font/google";
+import { PWARegister } from "@/components/PWARegister";
 import "./globals.css";
 
 const display = Barlow_Condensed({
@@ -27,6 +28,17 @@ export const metadata: Metadata = {
   title: "WC26 Final Call — World Cup 2026 Bracket Predictor",
   description:
     "48 Teams. One Champion. Your Call. Pick every winner of the FIFA World Cup 2026, from the group stage to the final.",
+  applicationName: "WC26 Final Call",
+  manifest: "/manifest.webmanifest",
+  icons: {
+    icon: "/icon.svg",
+    apple: "/icon.svg",
+  },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "WC26",
+  },
 };
 
 export const viewport: Viewport = {
@@ -42,6 +54,7 @@ export default function RootLayout({
     <html lang="en" className={`${display.variable} ${body.variable} ${mono.variable}`}>
       <body className="scanlines min-h-screen bg-base text-text-primary antialiased">
         {children}
+        <PWARegister />
       </body>
     </html>
   );
