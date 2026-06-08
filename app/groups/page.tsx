@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowRight, Trophy } from "lucide-react";
+import { ArrowRight, Shuffle, Trophy, Wand2 } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { StageHeader } from "@/components/layout/StageHeader";
 import { GroupTable } from "@/components/ui/GroupTable";
@@ -28,6 +28,20 @@ export default function GroupsPage() {
   const thirds = allThirdPlaceTeams(state);
   const selectedCount = state.thirdPlacePicks.length;
 
+  const hasProgress =
+    t.completedGroups > 0 ||
+    state.thirdPlacePicks.length > 0 ||
+    Object.keys(state.knockoutPicks).length > 0;
+
+  const guarded = (fill: () => void) => () => {
+    if (
+      !hasProgress ||
+      window.confirm("Replace your current picks? This overwrites the whole bracket.")
+    ) {
+      fill();
+    }
+  };
+
   return (
     <AppShell activeStage="GROUPS">
       <StageHeader
@@ -35,6 +49,28 @@ export default function GroupsPage() {
         title="Group Stage"
         subtitle="Tap to crown a winner, runner-up, and third place in all 12 groups. Then pick the eight best third-placed teams to advance to the Round of 32."
       />
+
+      <div className="mb-6 flex flex-wrap items-center gap-2.5">
+        <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-text-muted">
+          Quick start
+        </span>
+        <button
+          type="button"
+          onClick={guarded(t.autoFillSeeded)}
+          className="inline-flex items-center gap-2 rounded-lg border border-border bg-surface px-3.5 py-2 font-display text-sm font-bold uppercase tracking-wide text-text-primary transition hover:border-accent-gold/60 hover:text-accent-gold"
+        >
+          <Wand2 className="h-4 w-4" />
+          Auto-fill by seed
+        </button>
+        <button
+          type="button"
+          onClick={guarded(t.randomize)}
+          className="inline-flex items-center gap-2 rounded-lg border border-border bg-surface px-3.5 py-2 font-display text-sm font-bold uppercase tracking-wide text-text-primary transition hover:border-accent-blue-bright/70 hover:text-accent-blue-bright"
+        >
+          <Shuffle className="h-4 w-4" />
+          Chaos mode
+        </button>
+      </div>
 
       <div className="mb-6 flex items-center gap-3">
         <div className="h-2 flex-1 overflow-hidden rounded-full bg-elevated">

@@ -27,7 +27,10 @@ npm run build    # production build
 
 1. **/groups** — Tap to rank a winner (gold), runner-up (silver), and 3rd place
    in all 12 groups; the remaining team is the auto 4th. Once all groups are set,
-   pick the **8 best third-placed teams** to fill the Round of 32.
+   pick the **8 best third-placed teams** to fill the Round of 32. Two quick-start
+   shortcuts fill the entire bracket in one tap: **Auto-fill by seed** (pot
+   favourites advance) and **Chaos mode** (a random but valid bracket) — both
+   meant as a starting point you then tweak.
 2. **/bracket** — The official FIFA 2026 knockout bracket (matches 73–104).
    Click a team to advance them; the loser is greyed out everywhere instantly.
    SVG connectors draw and turn green as each match resolves. Desktop shows the

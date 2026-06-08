@@ -13,6 +13,7 @@ import {
 } from "./bracketEngine";
 import { clearState, EMPTY_STATE, loadState, saveState } from "./storage";
 import { clearShareParam, readSharedStateFromUrl } from "./share";
+import { buildRandomState, buildSeededState } from "./autoFill";
 
 const ROUND_ORDER = ["R32", "R16", "QF", "SF", "FINAL"] as const;
 
@@ -152,6 +153,16 @@ export function useTournament() {
     setState(EMPTY_STATE);
   }, []);
 
+  /** Pre-fill the whole bracket so the pot favourites advance. */
+  const autoFillSeeded = useCallback(() => {
+    update(() => buildSeededState());
+  }, [update]);
+
+  /** Fill a random but valid bracket. */
+  const randomize = useCallback(() => {
+    update(() => buildRandomState());
+  }, [update]);
+
   const resolver = useMemo(() => buildResolver(state), [state]);
 
   const groupsDone = useMemo(() => allGroupsComplete(state), [state]);
@@ -175,6 +186,8 @@ export function useTournament() {
     advanceTeam,
     setStage,
     resetTournament,
+    autoFillSeeded,
+    randomize,
   };
 }
 
