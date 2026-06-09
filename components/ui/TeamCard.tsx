@@ -111,8 +111,8 @@ export function TeamCard({
         status === "winner" && "border-accent-green/60 bg-accent-green/[0.06]",
         status === "champion" &&
           "border-accent-gold bg-accent-gold/[0.1] animate-gold-pulse",
-        eliminated && "border-border/50 opacity-30 grayscale",
-        eliminated && interactive && "hover:opacity-60",
+        eliminated && "border-border/50 opacity-50 grayscale",
+        eliminated && interactive && "hover:opacity-80",
         className,
       )}
       style={

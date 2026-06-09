@@ -133,7 +133,7 @@ export default function GroupsPage() {
               variants={staggerContainer}
               initial="hidden"
               animate="show"
-              className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+              className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4"
             >
               {thirds.map(({ group, teamId }) => {
                 const team = getTeam(teamId);
@@ -147,9 +147,10 @@ export default function GroupsPage() {
                     <TeamCard
                       team={team}
                       status={selected ? "winner" : "default"}
+                      size="sm"
                       onClick={() => t.toggleThirdPlace(teamId)}
                       disabled={!selected && atCap}
-                      className={!selected && atCap ? "opacity-40" : undefined}
+                      className={!selected && atCap ? "opacity-60" : undefined}
                     />
                   </div>
                 );
@@ -182,6 +183,24 @@ export default function GroupsPage() {
           </motion.section>
         )}
       </AnimatePresence>
+
+      {/* Mobile: always-reachable CTA once all 8 thirds are in (e.g. after auto-fill). */}
+      {t.thirdsDone && (
+        <>
+          <div className="h-20 lg:hidden" aria-hidden />
+          <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-base/90 px-4 py-3 backdrop-blur lg:hidden">
+            <Link
+              href="/bracket"
+              onClick={() => t.setStage("bracket")}
+              className="flex w-full items-center justify-center gap-2 rounded-lg bg-accent-gold px-5 py-3 font-display text-lg font-bold uppercase tracking-wide text-base transition hover:brightness-110"
+            >
+              <Trophy className="h-5 w-5" />
+              Enter the Bracket
+              <ArrowRight className="h-5 w-5" />
+            </Link>
+          </div>
+        </>
+      )}
     </AppShell>
   );
 }
