@@ -148,8 +148,8 @@ export function DialogProvider({ children }: { children: React.ReactNode }) {
                   autoFocus={!isPrompt}
                   onClick={accept}
                   className={cn(
-                    "rounded-lg px-4 py-2 font-display text-sm font-bold uppercase tracking-wide text-base transition hover:brightness-110",
-                    danger ? "bg-accent-red text-white" : "bg-accent-gold",
+                    "rounded-lg px-4 py-2 font-display text-sm font-bold uppercase tracking-wide transition hover:brightness-110",
+                    danger ? "bg-accent-red text-white" : "bg-accent-gold text-base",
                   )}
                 >
                   {state.confirmLabel || (danger ? "Confirm" : "OK")}

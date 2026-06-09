@@ -134,8 +134,10 @@ export function TeamCard({
       <span className="min-w-0 flex-1">
         <span
           className={cn(
-            "block truncate font-display font-bold uppercase tracking-wide leading-tight",
-            size === "sm" ? "text-sm" : size === "lg" ? "text-xl" : "text-base",
+            "block truncate font-display font-bold uppercase tracking-wide leading-tight text-text-primary",
+            // NB: `text-base` would resolve to the custom `base` colour (near-black),
+            // not a font size — use an explicit size for the md case.
+            size === "sm" ? "text-sm" : size === "lg" ? "text-xl" : "text-[1rem]",
             eliminated && "line-through",
             status === "champion" && "text-accent-gold",
           )}
