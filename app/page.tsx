@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowRight, Play, RotateCw } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Play, RotateCw } from "lucide-react";
 import { TEAMS } from "@/data/teams";
 import { hasSavedState } from "@/lib/storage";
 
@@ -104,6 +104,19 @@ export default function HomePage() {
             </div>
           ))}
         </motion.div>
+
+        <motion.a
+          href="https://www.odaidh.dev/"
+          target="_blank"
+          rel="noopener noreferrer"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.7 }}
+          className="group mt-12 inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.25em] text-text-muted transition-colors hover:text-accent-gold"
+        >
+          Built by Odai!
+          <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+        </motion.a>
       </div>
 
       {/* Flag ticker bottom (reverse) */}
