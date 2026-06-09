@@ -25,6 +25,7 @@ const config: Config = {
         display: ["var(--font-display)", "sans-serif"],
         body: ["var(--font-body)", "sans-serif"],
         mono: ["var(--font-mono)", "monospace"],
+        wordmark: ["var(--font-wordmark)", "var(--font-display)", "sans-serif"],
       },
       backgroundImage: {
         "gradient-hero":

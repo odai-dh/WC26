@@ -43,7 +43,7 @@ export default function HomePage() {
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="font-display text-[18vw] font-black uppercase leading-[0.82] tracking-tighter sm:text-8xl md:text-9xl"
+          className="font-wordmark text-[18vw] uppercase leading-[0.82] tracking-tight sm:text-8xl md:text-9xl"
         >
           <span className="gradient-text">WC26</span>
           <br />

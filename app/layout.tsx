@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Barlow_Condensed, DM_Sans, JetBrains_Mono } from "next/font/google";
+import { Anton, Barlow_Condensed, DM_Sans, JetBrains_Mono } from "next/font/google";
 import { PWARegister } from "@/components/PWARegister";
 import { DialogProvider } from "@/components/ui/Dialog";
 import "./globals.css";
@@ -22,6 +22,13 @@ const mono = JetBrains_Mono({
   subsets: ["latin"],
   weight: ["400", "500", "700"],
   variable: "--font-mono",
+  display: "swap",
+});
+
+const wordmark = Anton({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-wordmark",
   display: "swap",
 });
 
@@ -52,7 +59,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${display.variable} ${body.variable} ${mono.variable}`}>
+    <html
+      lang="en"
+      className={`${display.variable} ${body.variable} ${mono.variable} ${wordmark.variable}`}
+    >
       <body className="scanlines min-h-screen bg-base text-text-primary antialiased">
         <DialogProvider>{children}</DialogProvider>
         <PWARegister />
