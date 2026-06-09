@@ -17,9 +17,9 @@ export default function HomePage() {
   }, []);
 
   return (
-    <main className="mesh-bg noise scanlines relative min-h-screen overflow-hidden">
+    <main className="mesh-bg noise scanlines relative flex min-h-screen flex-col overflow-hidden">
       {/* Flag ticker top */}
-      <div className="absolute inset-x-0 top-0 z-10 overflow-hidden border-b border-border/50 py-3 [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]">
+      <div className="relative z-10 shrink-0 overflow-hidden border-b border-border/50 py-3 [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]">
         <div className="flex w-max animate-flag-scroll gap-6 text-2xl">
           {TICKER.map((team, i) => (
             <span key={`${team.id}-${i}`} className="opacity-70" aria-hidden>
@@ -29,7 +29,7 @@ export default function HomePage() {
         </div>
       </div>
 
-      <div className="relative z-10 mx-auto flex min-h-screen max-w-5xl flex-col items-center justify-center px-6 text-center">
+      <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-1 flex-col items-center justify-center px-6 py-8 text-center">
         <motion.p
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -63,7 +63,7 @@ export default function HomePage() {
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
-          className="mt-10 flex flex-col items-center gap-3 sm:flex-row"
+          className="mt-8 flex flex-col items-center gap-3 sm:mt-10 sm:flex-row"
         >
           <Link
             href="/groups"
@@ -89,7 +89,7 @@ export default function HomePage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.5 }}
-          className="mt-16 grid grid-cols-3 gap-8 font-mono text-text-secondary"
+          className="mt-10 grid grid-cols-3 gap-8 font-mono text-text-secondary sm:mt-16"
         >
           {[
             { n: "48", l: "Teams" },
@@ -112,7 +112,7 @@ export default function HomePage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.7 }}
-          className="group mt-12 inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.25em] text-text-muted transition-colors hover:text-accent-gold"
+          className="group mt-8 inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.25em] text-text-muted transition-colors hover:text-accent-gold sm:mt-12"
         >
           Built by Odai!
           <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
@@ -120,7 +120,7 @@ export default function HomePage() {
       </div>
 
       {/* Flag ticker bottom (reverse) */}
-      <div className="absolute inset-x-0 bottom-0 z-10 overflow-hidden border-t border-border/50 py-3 [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]">
+      <div className="relative z-10 shrink-0 overflow-hidden border-t border-border/50 py-3 [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]">
         <div className="flex w-max animate-flag-scroll gap-6 text-2xl [animation-direction:reverse]">
           {TICKER.map((team, i) => (
             <span key={`${team.id}-b-${i}`} className="opacity-70" aria-hidden>
