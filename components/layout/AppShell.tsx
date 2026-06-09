@@ -43,6 +43,25 @@ export function AppShell({
     };
   }, []);
 
+  const renderNav = () =>
+    NAV.map((item) => {
+      const active = pathname?.startsWith(item.href);
+      return (
+        <Link
+          key={item.href}
+          href={item.href}
+          className={cn(
+            "rounded-md px-3 py-1.5 text-center font-mono text-xs uppercase tracking-widest transition-colors",
+            active
+              ? "bg-elevated text-text-primary"
+              : "text-text-secondary hover:text-text-primary",
+          )}
+        >
+          {item.label}
+        </Link>
+      );
+    });
+
   return (
     <div className="relative min-h-screen">
       <header
@@ -50,39 +69,27 @@ export function AppShell({
         className="sticky top-0 z-30 border-b border-border bg-base/85 backdrop-blur-md"
       >
         <div className="mx-auto flex max-w-[1400px] flex-col gap-2 px-4 py-2.5 md:px-8">
-          <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center justify-between gap-3">
             <Link
               href="/"
-              className="group flex items-center gap-2 font-display text-xl font-black uppercase tracking-tight"
+              className="group flex shrink-0 items-center gap-2 whitespace-nowrap font-display text-xl font-black uppercase tracking-tight"
             >
               <span className="gradient-text">WC26</span>
-              <span className="text-text-secondary group-hover:text-text-primary transition-colors">
+              <span className="text-text-secondary transition-colors group-hover:text-text-primary">
                 Final Call
               </span>
             </Link>
-            <div className="flex items-center gap-2">
+            <div className="flex min-w-0 items-center gap-2">
               <BracketSwitcher />
-              <nav className="flex items-center gap-1">
-                {NAV.map((item) => {
-                  const active = pathname?.startsWith(item.href);
-                  return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      className={cn(
-                        "rounded-md px-2.5 py-1.5 font-mono text-xs uppercase tracking-widest transition-colors sm:px-3",
-                        active
-                          ? "bg-elevated text-text-primary"
-                          : "text-text-secondary hover:text-text-primary",
-                      )}
-                    >
-                      {item.label}
-                    </Link>
-                  );
-                })}
+              {/* Inline nav on larger screens; full-width row below on mobile. */}
+              <nav className="hidden items-center gap-1 sm:flex">
+                {renderNav()}
               </nav>
             </div>
           </div>
+
+          <nav className="grid grid-cols-3 gap-1 sm:hidden">{renderNav()}</nav>
+
           {activeStage && (
             <div className="border-t border-border/60 pt-1.5">
               <ProgressBar active={activeStage} />
