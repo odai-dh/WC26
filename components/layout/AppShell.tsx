@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useRef } from "react";
 import { ProgressBar, type StageKey } from "@/components/ui/ProgressBar";
 import { BracketSwitcher } from "@/components/layout/BracketSwitcher";
 import { cn } from "@/lib/cn";
@@ -20,10 +21,34 @@ export function AppShell({
   activeStage?: StageKey;
 }) {
   const pathname = usePathname();
+  const headerRef = useRef<HTMLElement>(null);
+
+  // Publish the real header height so sticky sub-bars (e.g. the mobile round
+  // stepper) can sit flush beneath it instead of slipping under a hardcoded offset.
+  useEffect(() => {
+    const el = headerRef.current;
+    if (!el) return;
+    const set = () =>
+      document.documentElement.style.setProperty(
+        "--app-header-h",
+        `${el.offsetHeight}px`,
+      );
+    set();
+    const ro = new ResizeObserver(set);
+    ro.observe(el);
+    window.addEventListener("resize", set);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", set);
+    };
+  }, []);
 
   return (
     <div className="relative min-h-screen">
-      <header className="sticky top-0 z-30 border-b border-border bg-base/85 backdrop-blur-md">
+      <header
+        ref={headerRef}
+        className="sticky top-0 z-30 border-b border-border bg-base/85 backdrop-blur-md"
+      >
         <div className="mx-auto flex max-w-[1400px] flex-col gap-2 px-4 py-2.5 md:px-8">
           <div className="flex items-center justify-between gap-4">
             <Link

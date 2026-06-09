@@ -242,7 +242,10 @@ function MobileBracket({
 
   return (
     <div>
-      <div className="sticky top-[104px] z-20 mb-4 flex items-center justify-between gap-3 rounded-xl border border-border bg-base/90 p-2 backdrop-blur">
+      <div
+        className="sticky z-20 mb-4 flex items-center justify-between gap-3 rounded-xl border border-border bg-base/90 p-2 backdrop-blur"
+        style={{ top: "calc(var(--app-header-h, 104px) + 8px)" }}
+      >
         <button
           type="button"
           onClick={() => setStepRound(Math.max(0, stepRound - 1))}
