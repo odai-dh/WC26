@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/cn";
 
@@ -16,9 +17,21 @@ const STAGES: { key: StageKey; label: string }[] = [
 
 export function ProgressBar({ active }: { active: StageKey }) {
   const activeIndex = STAGES.findIndex((s) => s.key === active);
+  const navRef = useRef<HTMLElement>(null);
+  const activeRef = useRef<HTMLDivElement>(null);
+
+  // Keep the lit stage centred in the (horizontally-scrolling) bar on mobile.
+  useEffect(() => {
+    const nav = navRef.current;
+    const el = activeRef.current;
+    if (!nav || !el) return;
+    const target = el.offsetLeft - nav.clientWidth / 2 + el.clientWidth / 2;
+    nav.scrollTo({ left: Math.max(0, target), behavior: "smooth" });
+  }, [activeIndex]);
 
   return (
     <nav
+      ref={navRef}
       aria-label="Tournament progress"
       className="flex items-center gap-1 overflow-x-auto no-scrollbar py-1"
     >
@@ -28,6 +41,7 @@ export function ProgressBar({ active }: { active: StageKey }) {
         return (
           <div key={stage.key} className="flex items-center gap-1 shrink-0">
             <div
+              ref={isActive ? activeRef : undefined}
               className={cn(
                 "relative flex items-center gap-2 rounded-md px-2.5 py-1 font-mono text-[11px] font-medium uppercase tracking-widest transition-colors",
                 isActive && "text-text-primary",

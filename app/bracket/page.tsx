@@ -49,7 +49,7 @@ export default function BracketPage() {
   const champion = t.state.champion ? getTeam(t.state.champion) : null;
 
   return (
-    <AppShell activeStage="R32">
+    <AppShell activeStage={ROUND_KEYS[stepRound]}>
       <div className="flex flex-wrap items-end justify-between gap-4">
         <StageHeader
           eyebrow="Stage 2 — Knockouts"
