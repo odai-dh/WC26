@@ -78,6 +78,11 @@ body {
   background-clip: text;
   -webkit-text-fill-color: transparent;
   color: transparent;
+  /* Without this the gradient paint box follows the tight line-height and
+     clips the bottom of glyphs like the "6". inline-block + room fixes it. */
+  display: inline-block;
+  line-height: 1;
+  padding-bottom: 0.1em;
 }
 
 ::-webkit-scrollbar {
