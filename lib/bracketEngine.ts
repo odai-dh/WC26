@@ -1,5 +1,6 @@
 import { BRACKET, BRACKET_BY_ID } from "@/data/bracket";
 import { GROUPS_BY_ID } from "@/data/groups";
+import { THIRD_PLACE_ALLOCATION } from "@/data/thirdPlaceAllocation";
 import type {
   BracketMatch,
   GroupId,
@@ -41,60 +42,38 @@ export function allThirdPlaceTeams(
     .filter((x): x is { group: GroupId; teamId: string } => x.teamId != null);
 }
 
-/** The third-place R32 slots, in match order, with their allowed source groups. */
-function thirdSlots(): { matchId: string; side: "home" | "away"; allowed: GroupId[] }[] {
-  const slots: { matchId: string; side: "home" | "away"; allowed: GroupId[] }[] = [];
-  for (const m of BRACKET) {
-    if (m.home.kind === "third") slots.push({ matchId: m.id, side: "home", allowed: m.home.allowed });
-    if (m.away.kind === "third") slots.push({ matchId: m.id, side: "away", allowed: m.away.allowed });
-  }
-  return slots;
-}
-
 /**
- * Assign the chosen third-place teams to the eight third-place bracket slots,
- * respecting each slot's allowed source groups (FIFA allocation constraints).
- * Returns a map of `${matchId}:${side}` -> teamId. Uses deterministic
- * backtracking so the same picks always yield the same bracket.
+ * Assign the chosen third-place teams to the eight third-place bracket slots
+ * using FIFA's official allocation table (Annexe C). The table maps each set
+ * of eight qualifying groups to a fixed Round of 32 match for every third —
+ * a plain "find any valid matching" approach does NOT reproduce it.
+ *
+ * Returns a map of `${matchId}:${side}` -> teamId.
  */
 export function assignThirds(
   state: TournamentState,
 ): Record<string, string> {
-  const slots = thirdSlots();
   // group -> teamId for the chosen thirds only
   const chosen = new Map<GroupId, string>();
   for (const teamId of state.thirdPlacePicks) {
     const group = teamId ? findGroupOfTeam(teamId) : null;
     if (group) chosen.set(group, teamId);
   }
+
   const chosenGroups = [...chosen.keys()].sort();
+  if (chosenGroups.length !== THIRD_PLACE_SLOTS) return {};
 
-  // Backtracking bipartite match: slot index -> group
-  const assignment: Record<number, GroupId> = {};
-  const usedGroups = new Set<GroupId>();
+  const allocation = THIRD_PLACE_ALLOCATION[chosenGroups.join("")];
+  if (!allocation) return {};
 
-  const solve = (i: number): boolean => {
-    if (i === slots.length) return true;
-    const allowedHere = chosenGroups.filter(
-      (g) => slots[i].allowed.includes(g) && !usedGroups.has(g),
-    );
-    for (const g of allowedHere) {
-      assignment[i] = g;
-      usedGroups.add(g);
-      if (solve(i + 1)) return true;
-      usedGroups.delete(g);
-      delete assignment[i];
-    }
-    return false;
-  };
-
+  // Each third-place match pairs a group winner (home) with a third (away).
+  // The table is keyed by the winner's group slot, e.g. "1E" -> "D".
   const result: Record<string, string> = {};
-  if (chosenGroups.length === slots.length && solve(0)) {
-    slots.forEach((slot, i) => {
-      const g = assignment[i];
-      const teamId = chosen.get(g);
-      if (teamId) result[`${slot.matchId}:${slot.side}`] = teamId;
-    });
+  for (const m of BRACKET) {
+    if (m.home.kind !== "winner" || m.away.kind !== "third") continue;
+    const thirdGroup = allocation[`1${m.home.group}`] as GroupId | undefined;
+    const teamId = thirdGroup ? chosen.get(thirdGroup) : undefined;
+    if (teamId) result[`${m.id}:away`] = teamId;
   }
   return result;
 }
